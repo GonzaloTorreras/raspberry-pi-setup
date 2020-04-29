@@ -219,7 +219,7 @@ customAliases() {
         cd ~/
         downloadAliases
         #fix permissions
-        sudo chown $USER:$USER .bash_aliases_folder/
+        sudo chown $USER:$USER ~/.bash_aliases_folder/
     fi
 
     echo -e "\n"
@@ -233,7 +233,7 @@ customAliases() {
         downloadAliases
 
         #fix permissions
-        sudo chown ${userAdd}:${userAdd} .bash_aliases_folder/
+        sudo chown ${userAdd}:${userAdd} /home/${userAdd}/.bash_aliases_folder/
     fi
 
 }
