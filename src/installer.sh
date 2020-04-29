@@ -50,34 +50,23 @@ addUser() {
         sudo /usr/sbin/useradd -m ${userAdd}
     fi
 
-    read -p "Write your pass for ${userAdd}" userPass
+    echo -e "\n"
+    read -p "Write your pass for ${userAdd}: " userPass
     echo -e "${userAdd}:${userPass}" | sudo chpasswd
 
+    echo -e "\n"
     read -n 1 -p "Add user to sudoers.d? (using sudo wont ask for passwd) [y/n]: " yn
     if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
         echo "${userAdd} ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/010_${userAdd}-nopasswd
     fi
 
+    echo -e "\n"
     read -n 1 -p "Lock the root user [y/n]: " yn
     if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
         sudo passwd --lock root
     fi
 
-    read -n 1 -p "Continue the script with the new user ${userAdd}? Recomended [y/n]: " yn
-    if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
-        sudo su $userAdd
-    fi
-
-    read -n 1 -p "Del user pi? [y/n]: " yn
-    if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
-        read -n 1 -p "Del home pi too? [y/n]: " yn
-        if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
-            sudo deluser -remove-home pi
-        else
-            sudo deluser pi
-        fi
-    fi
-    
+    echo -e "\n"
     echo "Use your new user ${userAdd} as alias for root?"
     echo "This action will add to /etc/aliases:"
     echo "root: ${userAdd},root"
@@ -88,6 +77,34 @@ addUser() {
         echo -e "root: ${userAdd},root \n${userAdd}: ${emailAliases}"
         #reload aliases
         sudo /usr/bin/newaliases
+    fi
+
+    #echo -e "\n"
+    #read -n 1 -p "Continue the script with the new user ${userAdd}? Recomended [y/n]: " yn
+    #if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
+    #    sudo su $userAdd
+    #fi
+
+    delPiUser=0
+    echo -e "\n"
+    read -n 1 -p "Del user pi? [y/n]: " yn
+    if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
+        read -n 1 -p "Del home pi too? [y/n]: " yn
+        if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
+            if ! [ whoami == "pi" ]; then
+                sudo deluser -remove-home pi
+            else
+                delPiUser=2
+                echo -e "\nRunning currently as pi user, pi can't be automatically deleted"
+            fi
+        else
+            if ! [ whoami == "pi" ]; then
+                sudo deluser pi
+            else
+                delPiUser=1
+                echo -e "\nRunning currently as pi user, pi can't be automatically deleted"
+            fi
+        fi
     fi
 
     echo -e "\n"
@@ -172,6 +189,10 @@ installDocker() {
 
 }
 
+customAliases(){
+
+}
+
 inMenu=1
 while [ $inMenu ]; do
     mainMenu
@@ -243,4 +264,21 @@ if [ "$opt4" == "x" ]; then
     echo -e "\n"
 fi
 
+if [ "$opt5" == "x" ]; then
+    customAliases
+    echo -e "\n"
+fi
+
+if [ delPiUser ]; then
+    echo -e "pi user, couldn't be deleted, probably because its running this same shell or a different process"
+    echo -e "close any process including this sessions and login with your new user"
+    echo -e "from there exec:"
+
+    if [ delPiUser == 2 ]; then
+        echo "sudo deluser -remove-home pi"
+    else
+        echo "sudo deluser pi"
+    fi
+
+fi
 exit 0
