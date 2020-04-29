@@ -42,14 +42,17 @@ You can run it at any point of your setup, or with any user.
 Recomended to do it with pi user, or a passwordless sudo acces user.
 
 ### To do
+- [ ] Improve/expand aliases (maybe split by categories to decide what install such docker related)
+
 **Docker image installers**
 - [ ] Nginx (ideally with certbot for LetsEncript).
 - [ ] MySQL (MariaDB)
+- [ ] Traefik
 - [ ] NextCloud
 - [ ] Pi Hole
 - [ ] OpenVPN || piVPN
+- [ ] RaspberryCast
 
 ### Possible ideas:
-- [ ] Improve/expand aliases (maybe split by categories to decide what install such docker related)
-- [ ] [Localice](https://unix.stackexchange.com/a/318661) for translations
-- [ ] Also provide common services such MySQL (mariaDB), nginx etc as standalone installations instead all docker based?
+- [ ] [Localice](https://unix.stackexchange.com/a/318661) the installer for translations
+- [ ] Maybe provide common services such MySQL (mariaDB), nginx etc as standalone installations instead all docker based?
