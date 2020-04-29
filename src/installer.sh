@@ -127,22 +127,25 @@ installUFW() {
 
     read -n 1 -p "Want to configure now? [y/n]: " yn
     if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
-
+        echo -e "\n"
         read -n 1 -p "Block any incoming? [y/n]: " yn
         if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
             sudo ufw default deny incoming
         fi
 
+        echo -e "\n"
         read -n 1 -p "Allow any outgoing? [y/n]: " yn
         if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
             sudo ufw default allow outgoing
         fi
 
+        echo -e "\n"
         read -n 1 -p "Allow any from local access (192.168.1.0/24)? [y/n]: " yn
         if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
             sudo ufw allow from 192.168.1.0/24
         fi
 
+        echo -e "\n"
         read -n 1 -p "Activate UFW? [y/n]: " yn
         if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
             sudo ufw enable
@@ -153,6 +156,7 @@ installUFW() {
 }
 
 installDocker() {
+
     #check if already installed
     if ! [ -x "$(command -v docker)" ]; then
         curl -sSL https://get.docker.com | sh
@@ -160,20 +164,25 @@ installDocker() {
         echo "Docker already exists!"
     fi
 
+    echo -e "\n"
     read -n 1 -p "Want to configure docker now? [y/n]: " yn
     if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
+
+        echo -e "\n"
         read -n 1 -p "Add current user ${USER} to docker group? [y/n]: " yn
         if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
             sudo usermod -aG docker $USER
         fi
 
         if [ "$opt2" == "x" ]; then
+            echo -e "\n"
             read -n 1 -p "Add NEW user ${userAdd} to docker group? [y/n]: " yn
             if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
                 sudo usermod -aG docker ${userAdd}
             fi
         fi
 
+        echo -e "\n"
         read -n 1 -p "Want to install docker-compose? [y/n]: " yn
         if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
             echo -e "Installing dependencies\n"
@@ -189,7 +198,7 @@ installDocker() {
 
 }
 
-customAliases(){
+customAliases() {
 
 }
 
