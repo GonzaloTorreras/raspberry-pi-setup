@@ -42,10 +42,12 @@ You can run it at any point of your setup, or with any user.
 Recomended to do it with pi user, or a passwordless sudo acces user.
 
 ### To do
-**Docker images**
+**Docker image installers**
 - [ ] Nginx (ideally with certbot for LetsEncript).
 - [ ] MySQL (MariaDB)
 - [ ] NextCloud
+- [ ] Pi Hole
+- [ ] OpenVPN || piVPN
 
 ### Possible ideas:
 - [ ] Improve/expand aliases (maybe split by categories to decide what install such docker related)
