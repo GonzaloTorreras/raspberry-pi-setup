@@ -1,0 +1,31 @@
+# Usage: nginx_add_site( domain.com.conf ) || nginx_add_site( domain.com )
+nginx_add_enable(){
+    nginxFolderBase="/etc/nginx/"
+    if [ -f $nginxFolderBase/sites-available/$1 ]; then
+	    sudo ln -sf /etc/nginx/sites-available/$1 /etc/nginx/sites-enabled/ && sudo service nginx restart
+    elif [ -f $nginxFolderBase/sites-available/$1.conf ]; then
+        sudo ln -sf /etc/nginx/sites-available/$1.conf /etc/nginx/sites-enabled/ && sudo service nginx restart
+    fi
+}
+alias nginx_add_enable=nginx_add_enable
+
+# Usage: nginx_rm_enable( domain.com.conf ) || nginx_add_site( domain.com )
+nginx_rm_enable(){
+    nginxFolderBase="/etc/nginx/"
+    if [ -f $nginxFolderBase/sites-available/$1 ]; then
+	    sudo unlink /etc/nginx/sites-enabled/$1 && sudo service nginx restart
+    elif [ -f $nginxFolderBase/sites-available/$1.conf ]; then
+        sudo unlink $nginxFolderBase/sites-enabled/$1.conf && sudo service nginx restart
+    fi
+}
+# Usage: nginx_edit_site( domain.com.conf ) || nginx_edit_site( domain.com )
+nginx_edit_site(){
+    nginxFolderBase="/etc/nginx/"
+    if [ -f $nginxFolderBase/sites-available/$1 ]; then
+	    sudo nano $nginxFolderBase/sites-available/$1
+    elif [ -f $nginxFolderBase/sites-available/$1.conf ]; then
+        sudo nano $nginxFolderBase/sites-available/$1.conf
+    fi
+
+}
+alias nginx_edit_site=nginx_edit_site

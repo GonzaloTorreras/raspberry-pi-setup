@@ -30,7 +30,7 @@ mainMenu() {
     echo " 2.[$opt2] Add new user"
     echo " 3.[$opt3] Install UFW"
     echo " 4.[$opt4] Install docker"
-    echo " 5.[$opt5] Add useful aliases for myself"
+    echo " 5.[$opt5] Add useful aliases"
     echo " 0.    START"
     echo "#################################\n"
     echo "You can un/check choosing the task number"
@@ -215,20 +215,29 @@ customAliases() {
     echo -e "\n"
     read -n 1 -p "Add aliases to current user $USER [y/n]: " yn
     if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
-        cd ~/
-        wget
+        mkdir ~/.bash_aliases_folder
+        cd ~/.bash_aliases_folder
+        downloadAliases 
 
     fi
 
     echo -e "\n"
     read -n 1 -p "Add aliases to NEW user ${userAdd} [y/n]: " yn
     if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
-        cd ~/
-        wget
+        sudo mkdir /home/${userAdd}/.bash_aliases_folder
+        sudo cd /home/${userAdd}/.bash_aliases_folder
+        downloadAliases
         
     fi
 }
 
+downloadAliases(){
+    wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/loader && chmod +x 
+    wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/common && chmod +x
+    wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/generated && chmod +x
+    wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/nginx && chmod +x
+    wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/mysql && chmod +x
+}
 inMenu=1
 while [ $inMenu ]; do
     mainMenu

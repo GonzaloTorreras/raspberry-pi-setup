@@ -1,0 +1,14 @@
+#Usage: new_alias( aliasName, dothis)
+new_alias(){
+	#save first arg(name) locally
+	local first_arg="$1"
+	#get rid of first arg
+	shift 1
+	
+	echo "alias $first_arg='$@'" >> ~/.bash_aliases_folder/generated && source ~/.bash_aliases
+}
+#new_alias asignation
+alias new_alias=new_alias
+
+#below automatically added alias from new_alias
+alias reload_alias='source ~/.bashrc'

@@ -1,0 +1,26 @@
+# Usage: mariadb_new(ddbb_name, user, pass)
+mariadb_new(){
+	local commands="CREATE DATABASE $1;CREATE USER '$2'@'localhost' IDENTIFIED BY '$3';GRANT ALL privileges on '$1'.* TO '$2'@'localhost';FLUSH PRIVILEGES;EXIT;"
+	
+	echo "Put your mysql root pass below to execute:"
+	echo "$commands"	
+	echo "$commands" | mysql -u root -p
+}
+alias mariadb_new=mariadb_new
+
+# Usage: mariadb_del_user( userName )
+mariadb_del_user(){
+	local commands="DROP USER IF EXISTS '$1';FLUSH PRIVILEGES;EXIT;"	
+	echo "$commands"
+	echo "$commands" | mysql -u root -p
+
+}
+alias mariadb_deluser=mariadb_del_user
+
+# Usage: mariadb_del_db( dbName )
+mariadb_del_db(){
+	local commands="DROP DATABASE IF EXISTS '$1';FLUSH PRIVILEGES;EXIT"
+	echo "$commands"
+	echo "$commands" | mysql -u root -p
+}
+alias mariadb_del_db=mariadb_del_db
