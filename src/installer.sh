@@ -211,6 +211,7 @@ installDocker() {
 customAliases() {
     echo -e "\n"
     read -n 1 -p "Add aliases to current user $USER [y/n]: " yn
+    echo -e "\n"
     if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
         if ! [ -d ~/.bash_aliases_folder ]; then
             mkdir ~/.bash_aliases_folder
@@ -223,6 +224,7 @@ customAliases() {
 
     echo -e "\n"
     read -n 1 -p "Add aliases to NEW user ${userAdd} [y/n]: " yn
+    echo -e "\n"
     if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
          if ! [ -d /home/${userAdd}/.bash_aliases_folder ]; then
             sudo mkdir /home/${userAdd}/.bash_aliases_folder
@@ -246,11 +248,11 @@ downloadAliases() {
 
     # using sudo in case we are in home ${userAdd} with pi
     cd .bash_aliases_folder
-    sudo wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/loader && chmod +x
-    sudo wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/common && chmod +x
-    sudo wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/generated && chmod +x
-    sudo wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/nginx && chmod +x
-    sudo wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/mysql && chmod +x
+    sudo wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/loader && chmod +x loader
+    sudo wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/common && chmod +x common
+    sudo wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/generated && chmod +x generated
+    sudo wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/nginx && chmod +x nginx
+    sudo wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/mysql && chmod +x mysql
 }
 inMenu=1
 while [ $inMenu ]; do
