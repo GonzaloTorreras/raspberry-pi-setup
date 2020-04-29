@@ -240,19 +240,19 @@ customAliases() {
 
 downloadAliases() {
     # Add a call to the loader in .bashrc
-    echo "# Custom aliases" >>.bashrc
-    echo "if [ -d ~/.bash_aliases_folder ]; then"
-    echo "  . ~/.bash_aliases_folder/loader"
-    echo "fi"
-    echo "# END custom aliases"
+    echo "# Custom aliases" >> .bashrc
+    echo "if [ -d ~/.bash_aliases_folder ]; then" >> .bashrc
+    echo "  . ~/.bash_aliases_folder/loader" >> .bashrc
+    echo "fi" >> .bashrc
+    echo "# END custom aliases" >> .bashrc
 
     # using sudo in case we are in home ${userAdd} with pi
     cd .bash_aliases_folder
-    sudo wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/loader && chmod +x loader
-    sudo wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/common && chmod +x common
-    sudo wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/generated && chmod +x generated
-    sudo wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/nginx && chmod +x nginx
-    sudo wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/mysql && chmod +x mysql
+    sudo wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/loader && sudo chmod +x loader
+    sudo wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/common && sudo chmod +x common
+    sudo wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/generated && sudo chmod +x generated
+    sudo wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/nginx && sudo chmod +x nginx
+    sudo wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/mysql && sudo chmod +x mysql
 }
 inMenu=1
 while [ $inMenu ]; do
