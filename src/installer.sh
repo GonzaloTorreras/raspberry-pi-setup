@@ -212,7 +212,9 @@ customAliases() {
     echo -e "\n"
     read -n 1 -p "Add aliases to current user $USER [y/n]: " yn
     if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
-        mkdir ~/.bash_aliases_folder
+        if ! [ -d ~/.bash_aliases_folder ]; then
+            mkdir ~/.bash_aliases_folder
+        fi
         cd ~/
         downloadAliases
         #fix permissions
@@ -222,8 +224,10 @@ customAliases() {
     echo -e "\n"
     read -n 1 -p "Add aliases to NEW user ${userAdd} [y/n]: " yn
     if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
-        sudo mkdir /home/${userAdd}/.bash_aliases_folder
-        sudo cd /home/${userAdd}/
+         if ! [ -d /home/${userAdd}/.bash_aliases_folder ]; then
+            sudo mkdir /home/${userAdd}/.bash_aliases_folder
+        fi
+        cd /home/${userAdd}/
         downloadAliases
 
         #fix permissions
@@ -241,7 +245,7 @@ downloadAliases() {
     echo "# END custom aliases"
 
     # using sudo in case we are in home ${userAdd} with pi
-    sudo cd .bash_aliases_folder
+    cd .bash_aliases_folder
     sudo wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/loader && chmod +x
     sudo wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/common && chmod +x
     sudo wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/generated && chmod +x
