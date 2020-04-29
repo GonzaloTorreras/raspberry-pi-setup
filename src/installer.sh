@@ -35,7 +35,7 @@ mainMenu() {
     echo "#################################\n"
     echo "You can un/check choosing the task number"
     echo "0 to start"
-    read -n 2 -p "[0-9] Selection:" menuOpt
+    read -n 1 -p "[0-9] Selection:" menuOpt
 
 }
 
@@ -58,6 +58,12 @@ addUser() {
     read -n 1 -p "Add user to sudoers.d? (using sudo wont ask for passwd) [y/n]: " yn
     if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
         echo "${userAdd} ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/010_${userAdd}-nopasswd
+    fi
+
+    echo -e "\n"
+    read -n 1 -p "Lock the pi user [y/n]: " yn
+    if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
+        sudo passwd --lock pi
     fi
 
     echo -e "\n"
@@ -123,7 +129,13 @@ addUser() {
 #fi
 
 installUFW() {
-    sudo apt install ufw
+    #check if already installed
+    if ! [ -x "$(command -v ufw)" ]; then
+        sudo apt install ufw
+    else
+        echo "UFW is already installed!"
+    fi
+    
 
     read -n 1 -p "Want to configure now? [y/n]: " yn
     if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
@@ -181,6 +193,7 @@ installDocker() {
                 sudo usermod -aG docker ${userAdd}
             fi
         fi
+    fi
 
         echo -e "\n"
         read -n 1 -p "Want to install docker-compose? [y/n]: " yn
@@ -194,12 +207,26 @@ installDocker() {
             sudo pip3 install docker-compose
         fi
 
-    fi
+    
 
 }
 
 customAliases() {
+    echo -e "\n"
+    read -n 1 -p "Add aliases to current user $USER [y/n]: " yn
+    if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
+        cd ~/
+        wget
 
+    fi
+
+    echo -e "\n"
+    read -n 1 -p "Add aliases to NEW user ${userAdd} [y/n]: " yn
+    if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
+        cd ~/
+        wget
+        
+    fi
 }
 
 inMenu=1
