@@ -220,6 +220,9 @@ customAliases() {
         downloadAliases
         #fix permissions
         sudo chown $USER:$USER ~/.bash_aliases_folder/
+
+        #reload aliases
+        source ~/.bashrc
     fi
 
     echo -e "\n"
