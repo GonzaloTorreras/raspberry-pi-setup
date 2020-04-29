@@ -232,14 +232,14 @@ sudo apt install logwatch
 sudo nano /usr/share/logwatch/default.conf/logwatch.conf
 ```
 
-### añadir alias para que el correo de logwatch se mande a gon y no a root
+### añadir alias para que el correo de logwatch se mande a $user y no a root
 ```sh
 sudo nano /etc/aliases
 ```
 ### añadir estas lineas:
 ```sh
-root: gon,root
-gon: torreras.g@gmail.com
+root: **tuUser**,root
+**tuUser**: **email@domain.com**
 ```
 
 ### recargar aliases
@@ -293,20 +293,20 @@ sudo apt install certbot
 
 ### exec 
 ```sh
-sudo certbot certonly --webroot -w /var/www/gonzalotorreras.com -d gonzalotorreras.com -d www.gonzalotorreras.com
+sudo certbot certonly --webroot -w /var/www/domain.com -d dmain.com -d www.domain.com
 ```
 ### Certs
-Priv key and chain are saved in /etc/letsencript/live/gonzalotorrreras.com/
+Priv key and chain are saved in /etc/letsencript/live/domain.com/
 
 ### edit nginx config for SSL
 ```sh
-sudo nano /etc/nginx/sites-available/gonzalotorreras.com
+sudo nano /etc/nginx/sites-available/domain.com
 ```
 ### add lines:
 ```sh
 listen 443 ssl;
-ssl_certificate /etc/letsencrypt/live/gonzalotorreras.com/fullchain.pem;
-ssl_certificate_key /etc/letsencrypt/live/gonzalotorreras.com/privkey.pem;
+ssl_certificate /etc/letsencrypt/live/domain.com/fullchain.pem;
+ssl_certificate_key /etc/letsencrypt/live/domain.com/privkey.pem;
 ```
 ### Add protection for DDOS
 ```sh
