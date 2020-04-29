@@ -72,18 +72,18 @@ addUser() {
         sudo passwd --lock root
     fi
 
-    echo -e "\n"
-    echo "Use your new user ${userAdd} as alias for root?"
-    echo "This action will add to /etc/aliases:"
-    echo "root: ${userAdd},root"
-    echo "${userAdd}: your@email.com"
-    read -n 1 -p "Recomended for example to receive events, send/receive emails etc. [y/n]: " yn
-    if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
-        read -p "Email to add to /etc/aliases: " emailAliases
-        echo -e "root: ${userAdd},root \n${userAdd}: ${emailAliases}"
-        #reload aliases
-        sudo /usr/bin/newaliases
-    fi
+    #echo -e "\n"
+    #echo "Use your new user ${userAdd} as alias for root?"
+    #echo "This action will add to /etc/aliases:"
+    #echo "root: ${userAdd},root"
+    #echo "${userAdd}: your@email.com"
+    #read -n 1 -p "Recomended for example to receive events, send/receive emails etc. [y/n]: " yn
+    #if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
+    #    read -p "Email to add to /etc/aliases: " emailAliases
+    #    echo -e "root: ${userAdd},root \n${userAdd}: ${emailAliases}"
+    #    #reload aliases
+    #    sudo /usr/bin/newaliases
+    #fi
 
     #echo -e "\n"
     #read -n 1 -p "Continue the script with the new user ${userAdd}? Recomended [y/n]: " yn
@@ -135,7 +135,6 @@ installUFW() {
     else
         echo "UFW is already installed!"
     fi
-    
 
     read -n 1 -p "Want to configure now? [y/n]: " yn
     if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
@@ -195,19 +194,17 @@ installDocker() {
         fi
     fi
 
-        echo -e "\n"
-        read -n 1 -p "Want to install docker-compose? [y/n]: " yn
-        if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
-            echo -e "Installing dependencies\n"
-            sudo apt install -y libffi-dev libssl-dev
-            sudo apt install -y python3 python3-pip
-            sudo apt remove python-configparser
+    echo -e "\n"
+    read -n 1 -p "Want to install docker-compose? [y/n]: " yn
+    if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
+        echo -e "Installing dependencies\n"
+        sudo apt install -y libffi-dev libssl-dev
+        sudo apt install -y python3 python3-pip
+        sudo apt remove python-configparser
 
-            echo -e "Install docker-compose"
-            sudo pip3 install docker-compose
-        fi
-
-    
+        echo -e "Install docker-compose"
+        sudo pip3 install docker-compose
+    fi
 
 }
 
@@ -216,27 +213,40 @@ customAliases() {
     read -n 1 -p "Add aliases to current user $USER [y/n]: " yn
     if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
         mkdir ~/.bash_aliases_folder
-        cd ~/.bash_aliases_folder
-        downloadAliases 
-
+        cd ~/
+        downloadAliases
+        #fix permissions
+        sudo chown $USER:$USER .bash_aliases_folder/
     fi
 
     echo -e "\n"
     read -n 1 -p "Add aliases to NEW user ${userAdd} [y/n]: " yn
     if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
         sudo mkdir /home/${userAdd}/.bash_aliases_folder
-        sudo cd /home/${userAdd}/.bash_aliases_folder
+        sudo cd /home/${userAdd}/
         downloadAliases
-        
+
+        #fix permissions
+        sudo chown ${userAdd}:${userAdd} .bash_aliases_folder/
     fi
+
 }
 
-downloadAliases(){
-    wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/loader && chmod +x 
-    wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/common && chmod +x
-    wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/generated && chmod +x
-    wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/nginx && chmod +x
-    wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/mysql && chmod +x
+downloadAliases() {
+    # Add a call to the loader in .bashrc
+    echo "# Custom aliases" >>.bashrc
+    echo "if [ -d ~/.bash_aliases_folder ]; then"
+    echo "  . ~/.bash_aliases_folder/loader"
+    echo "fi"
+    echo "# END custom aliases"
+
+    # using sudo in case we are in home ${userAdd} with pi
+    sudo cd .bash_aliases_folder
+    sudo wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/loader && chmod +x
+    sudo wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/common && chmod +x
+    sudo wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/generated && chmod +x
+    sudo wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/nginx && chmod +x
+    sudo wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/mysql && chmod +x
 }
 inMenu=1
 while [ $inMenu ]; do
