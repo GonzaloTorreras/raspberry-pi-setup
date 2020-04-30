@@ -228,7 +228,7 @@ installDocker() {
                 read -n 1 -p "Download ${dockerImage^} custom docker? [y/n]: " yn
                 echo -e "\n"
                 if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
-                    runDockerImage
+                    docker-compose up -d
                 fi
 
             fi # END downd custom container
@@ -262,11 +262,7 @@ downloadDockerImage() {
     
 }
 
-runDockerImage(){
 
-
-    
-}
 customAliases() {
     echo -e "\n"
     read -n 1 -p "Add aliases to current user $USER [y/n]: " yn

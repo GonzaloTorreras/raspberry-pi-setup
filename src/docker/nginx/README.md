@@ -36,3 +36,9 @@ To obtain a new or tweaked version of the certificates in the future,
 simply run certbot again with the "certonly" option.
 
 To non-interactively renew _all_ of your certificates, run "certbot renew"
+
+
+##### Note
+Originally from RealDroid:
+https://gitlab.com/realdroid/nginx-reverse-proxy-with-certbot/
+Tweaked and included PHP
