@@ -214,8 +214,7 @@ installDocker() {
         customContainers[0]="ngixn"
         customContainers[1]="nodered"
 
-        for dockerImage in "${customContainers[@]}"
-        do
+        for dockerImage in "${customContainers[@]}"; do
             echo -e "\n"
             # ${dockerImage^} this print first letter uppercase
             read -n 1 -p "Download ${dockerImage^} custom container? [y/n]: " yn
@@ -229,12 +228,14 @@ installDocker() {
                 echo -e "\n"
                 if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
                     docker-compose up -d
+                else
+                    cd ..
                 fi
 
             fi # END downd custom container
         done
 
-    fi     # END docker containers
+    fi # END docker containers
 
 } # END installDocker
 
@@ -251,17 +252,16 @@ downloadDockerImage() {
         fi
 
         mkdir ${dockerImage} && cd ${dockerImage}
-    
+
         #auto generate the zip from folder
         baseUrl="https://kinolien.github.io/gitzip/?download=https://github.com/GonzaloTorreras/raspberry-pi-setup/tree/master/src/docker/"
-        sudo wget -O ${dockerImage}.zip ${baseUrl}${dockerImage} 
-        
-        unzip ${dockerImage} && rm ${dockerImage}
-        echo -e "You can find ${dockerImage} ready"
-    fi
-    
-}
+        sudo wget -O ${dockerImage}.zip ${baseUrl}${dockerImage}
 
+        unzip ${dockerImage} && rm ${dockerImage}
+        echo -e "You can find ${dockerImage} here: $PWD"
+    fi
+
+}
 
 customAliases() {
     echo -e "\n"
