@@ -224,14 +224,15 @@ installDocker() {
                 downloadDockerImage
 
                 echo -e "\n"
-                read -n 1 -p "Download ${dockerImage^} custom docker? [y/n]: " yn
+                read -n 1 -p "RUN ${dockerImage^} custom docker? [y/n]: " yn
                 echo -e "\n"
                 if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
                     docker-compose up -d
-                else
-                    cd ..
+                    
                 fi
 
+                cd ..
+                
             fi # END downd custom container
         done
 
