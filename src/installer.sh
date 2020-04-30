@@ -192,7 +192,7 @@ installDocker() {
                 sudo usermod -aG docker ${userAdd}
             fi
         fi
-    fi
+    fi # END install docker
 
     echo -e "\n"
     read -n 1 -p "Want to install docker-compose? [y/n]: " yn
@@ -204,10 +204,68 @@ installDocker() {
 
         echo -e "Install docker-compose"
         sudo pip3 install docker-compose
-    fi
+    fi # END docker-compose
 
+    echo -e "\n"
+    read -n 1 -p "Want to setup docker containers? [y/n]: " yn
+    if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
+
+        #must match folder names in the repo inside docker/
+        customContainers[0]="ngixn"
+        customContainers[1]="nodered"
+
+        for dockerImage in "${customContainers[@]}"
+        echo -e "\n"
+        # ${dockerImage^} this print first letter uppercase
+        read -n 1 -p "Download ${dockerImage^} custom container? [y/n]: " yn
+        echo -e "\n"
+        if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
+
+            downloadDockerImage
+
+            echo -e "\n"
+            read -n 1 -p "Download ${dockerImage^} custom docker? [y/n]: " yn
+            echo -e "\n"
+            if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
+                runDockerImage
+            fi
+
+        fi # END downd custom container
+
+
+    fi     # END docker containers
+
+} # END installDocker
+
+downloadDockerImage() {
+
+    if [ "${dockerImage}" != "" ]; then
+
+        echo -e "\n"
+        read -n 1 -p "Do you want to use the current folder? $PWD [y/n]: " yn
+        if ! [[ "$yn" == "y" || "$yn" == "Y" ]]; then
+            echo -e "\n"
+            read -p "/full/path/for/docker/containers ? : " cdTo
+            cd cdTo
+        fi
+
+        mkdir ${dockerImage} && cd ${dockerImage}
+    
+        #auto generate the zip from folder
+        baseUrl="https://kinolien.github.io/gitzip/?download=https://github.com/GonzaloTorreras/raspberry-pi-setup/tree/master/src/docker/"
+        sudo wget -O ${dockerImage}.zip ${baseUrl}${dockerImage} 
+        
+        unzip ${dockerImage} && rm ${dockerImage}
+        echo -e "You can find ${dockerImage} ready"
+    fi
+    
 }
 
+runDockerImage(){
+
+
+    
+}
 customAliases() {
     echo -e "\n"
     read -n 1 -p "Add aliases to current user $USER [y/n]: " yn
@@ -229,7 +287,7 @@ customAliases() {
     read -n 1 -p "Add aliases to NEW user ${userAdd} [y/n]: " yn
     echo -e "\n"
     if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
-         if ! [ -d /home/${userAdd}/.bash_aliases_folder ]; then
+        if ! [ -d /home/${userAdd}/.bash_aliases_folder ]; then
             sudo mkdir /home/${userAdd}/.bash_aliases_folder
         fi
         cd /home/${userAdd}/
@@ -239,24 +297,29 @@ customAliases() {
         sudo chown ${userAdd}:${userAdd} /home/${userAdd}/.bash_aliases_folder/
     fi
 
-}
+} # END customAliases
 
 downloadAliases() {
     # Add a call to the loader in .bashrc
-    echo "# Custom aliases" >> .bashrc
-    echo "if [ -d ~/.bash_aliases_folder ]; then" >> .bashrc
-    echo "  . ~/.bash_aliases_folder/loader" >> .bashrc
-    echo "fi" >> .bashrc
-    echo "# END custom aliases" >> .bashrc
+    echo "# Custom aliases" >>.bashrc
+    echo "if [ -d ~/.bash_aliases_folder ]; then" >>.bashrc
+    echo "  . ~/.bash_aliases_folder/loader" >>.bashrc
+    echo "fi" >>.bashrc
+    echo "# END custom aliases" >>.bashrc
 
-    # using sudo in case we are in home ${userAdd} with pi
+    # using sudo from here in case we are in home ${userAdd} with pi
     cd .bash_aliases_folder
-    sudo wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/loader && sudo chmod +x loader
-    sudo wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/common && sudo chmod +x common
+
+    # -O to force overwrite, but not for generated which could contain already extra customs -in case you re-run
+    sudo wget -O loader https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/loader && sudo chmod +x loader
+    sudo wget -O common https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/common && sudo chmod +x common
+    sudo wget -O nginx https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/nginx && sudo chmod +x nginx
+    sudo wget -O mysql https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/mysql && sudo chmod +x mysql
+
     sudo wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/generated && sudo chmod +x generated
-    sudo wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/nginx && sudo chmod +x nginx
-    sudo wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/mysql && sudo chmod +x mysql
-}
+
+} # END downloadAliases
+
 inMenu=1
 while [ $inMenu ]; do
     mainMenu

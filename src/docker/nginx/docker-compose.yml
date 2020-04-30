@@ -1,0 +1,21 @@
+version: "3"
+services:
+  nginx:
+    build: .
+    container_name: nginxWithCerts
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./conf.d/:/etc/nginx/conf.d/
+      - ./letsencrypt/:/etc/letsencrypt/
+      - ./www/:/var/www/
+
+  php:
+    image: php:fpm
+    ports:
+      - 9000:9000
+    
+    #share web with PHP container too
+    volumes:
+      - ./www/:/var/www/
