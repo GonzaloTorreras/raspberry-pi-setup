@@ -215,23 +215,24 @@ installDocker() {
         customContainers[1]="nodered"
 
         for dockerImage in "${customContainers[@]}"
-        echo -e "\n"
-        # ${dockerImage^} this print first letter uppercase
-        read -n 1 -p "Download ${dockerImage^} custom container? [y/n]: " yn
-        echo -e "\n"
-        if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
-
-            downloadDockerImage
-
+        do
             echo -e "\n"
-            read -n 1 -p "Download ${dockerImage^} custom docker? [y/n]: " yn
+            # ${dockerImage^} this print first letter uppercase
+            read -n 1 -p "Download ${dockerImage^} custom container? [y/n]: " yn
             echo -e "\n"
             if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
-                runDockerImage
-            fi
 
-        fi # END downd custom container
+                downloadDockerImage
 
+                echo -e "\n"
+                read -n 1 -p "Download ${dockerImage^} custom docker? [y/n]: " yn
+                echo -e "\n"
+                if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
+                    runDockerImage
+                fi
+
+            fi # END downd custom container
+        done
 
     fi     # END docker containers
 
