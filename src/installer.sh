@@ -8,7 +8,6 @@ Help() {
     echo "Lock root account"
     echo "Install UFW and configure it"
     echo "Docker & docker-composer and configure it"
-
 }
 
 opt1="x"
@@ -26,11 +25,11 @@ mainMenu() {
 
     echo "#################################"
     echo " pi auto installer:"
-    echo " 1.[$opt1] update & upgrade"
-    echo " 2.[$opt2] Add new user"
-    echo " 3.[$opt3] Install UFW"
-    echo " 4.[$opt4] Install docker"
-    echo " 5.[$opt5] Add useful aliases"
+    echo " 1.[$opt1] Run update & upgrade"
+    echo " 2.[$opt2] User related (new user, useful aliases, delete pi...)"
+    echo " 3.[$opt3] Install/Config UFW"
+    echo " 4.[$opt4] Install/Config docker"
+    echo " 5.[$opt5] Install fan controller (check the readme for more info! Uses GPIO 21 by default)"
     echo " 0.    START"
     echo "#################################\n"
     echo "You can un/check choosing the task number"
@@ -39,15 +38,90 @@ mainMenu() {
 
 }
 
-userAdd=0
+
+customAliases() {
+    echo -e "\n"
+    read -n 1 -p "Add aliases to current user $USER [y/n]: " yn
+    echo -e "\n"
+    if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
+        if ! [ -d ~/.bash_aliases_folder ]; then
+            mkdir ~/.bash_aliases_folder
+        fi
+        cd ~/
+        downloadAliases
+        #fix permissions
+        sudo chown $USER:$USER ~/.bash_aliases_folder/
+
+        #reload aliases
+        source ~/.bashrc
+    fi
+
+    echo -e "\n"
+    read -n 1 -p "Add aliases to NEW user ${userAdd} [y/n]: " yn
+    echo -e "\n"
+    if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
+        if ! [ -d /home/${userAdd}/.bash_aliases_folder ]; then
+            sudo mkdir /home/${userAdd}/.bash_aliases_folder
+        fi
+        cd /home/${userAdd}/
+        downloadAliases
+
+        #fix permissions
+        sudo chown ${userAdd}:${userAdd} /home/${userAdd}/.bash_aliases_folder/
+    fi
+
+} # END customAliases
+
+downloadAliases() {
+    # Add a call to the loader in .bashrc
+    echo "# Custom aliases" >>.bashrc
+    echo "if [ -d ~/.bash_aliases_folder ]; then" >>.bashrc
+    echo "  . ~/.bash_aliases_folder/loader" >>.bashrc
+    echo "fi" >>.bashrc
+    echo "# END custom aliases" >>.bashrc
+
+    # using sudo from here in case we are in home ${userAdd} with pi
+    cd .bash_aliases_folder
+
+    # -O to force overwrite, but not for generated which could contain already extra customs -in case you re-run
+    sudo wget -O loader https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/loader && sudo chmod +x loader
+    sudo wget -O common https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/common && sudo chmod +x common
+    sudo wget -O docker https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/docker && sudo chmod +x docker
+    sudo wget -O generated https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/generated && sudo chmod +x generated
+    sudo wget -O mysql https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/mysql && sudo chmod +x mysql
+    sudo wget -O nginx https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/nginx && sudo chmod +x nginx
+
+    sudo wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/generated && sudo chmod +x generated
+
+} # END downloadAliases
+
+
+#	if [ `id -u` -eq 0 ]
+#	then
+#		echo "Please start this script without root privileges!"
+#		echo "Try again without sudo."
+#		exit 1
+#	fi
+
+
+userAdd=0 #used to control if a new user has been generated
 addUser() {
 
-    read -p "New user:" userAdd
-    read -n 1 -p "add $useradd to sudo group? [y/n]: " yn
+    echo -e "\n"
+    read -n 1 -p "Do you want to add a new user? [y/n]: " yn
     if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
-        sudo /usr/sbin/useradd --groups sudo -m ${userAdd}
-    else
-        sudo /usr/sbin/useradd -m ${userAdd}
+
+        read -p "New user:" userAdd
+        read -n 1 -p "add $useradd to sudo group? [y/n]: " yn
+        if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
+            sudo /usr/sbin/useradd --groups sudo -m ${userAdd}
+        else
+            sudo /usr/sbin/useradd -m ${userAdd}
+        fi
+
+        #add extra groups to fix stupid possible issues:
+            sudo usermod -G gpio ${userAdd}
+            sudo usermod -G video ${userAdd} #fix to be able to use vcgencmd measure_temp
     fi
 
     echo -e "\n"
@@ -58,6 +132,12 @@ addUser() {
     read -n 1 -p "Add user to sudoers.d? (using sudo wont ask for passwd) [y/n]: " yn
     if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
         echo "${userAdd} ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/010_${userAdd}-nopasswd
+    fi
+
+    echo -e "\n"
+    read -n 1 -p "Do you want to install useful aliases? [y/n]: " yn
+    if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
+        customAliases
     fi
 
     echo -e "\n"
@@ -116,17 +196,6 @@ addUser() {
     echo -e "\n"
 }
 
-#	if [ `id -u` -eq 0 ]
-#	then
-#		echo "Please start this script without root privileges!"
-#		echo "Try again without sudo."
-#		exit 1
-#	fi
-
-#if ! [ -x "$(command -v docker-compose)" ]; then
-#  echo 'Error: docker-compose is not installed.' >&2
-#  exit 1
-#fi
 
 installUFW() {
     #check if already installed
@@ -228,11 +297,11 @@ installDocker() {
                 echo -e "\n"
                 if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
                     docker-compose up -d
-                    
+
                 fi
 
                 cd ..
-                
+
             fi # END downd custom container
         done
 
@@ -264,59 +333,10 @@ downloadDockerImage() {
 
 }
 
-customAliases() {
+installNodered() { #legacy
     echo -e "\n"
-    read -n 1 -p "Add aliases to current user $USER [y/n]: " yn
-    echo -e "\n"
-    if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
-        if ! [ -d ~/.bash_aliases_folder ]; then
-            mkdir ~/.bash_aliases_folder
-        fi
-        cd ~/
-        downloadAliases
-        #fix permissions
-        sudo chown $USER:$USER ~/.bash_aliases_folder/
 
-        #reload aliases
-        source ~/.bashrc
-    fi
-
-    echo -e "\n"
-    read -n 1 -p "Add aliases to NEW user ${userAdd} [y/n]: " yn
-    echo -e "\n"
-    if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
-        if ! [ -d /home/${userAdd}/.bash_aliases_folder ]; then
-            sudo mkdir /home/${userAdd}/.bash_aliases_folder
-        fi
-        cd /home/${userAdd}/
-        downloadAliases
-
-        #fix permissions
-        sudo chown ${userAdd}:${userAdd} /home/${userAdd}/.bash_aliases_folder/
-    fi
-
-} # END customAliases
-
-downloadAliases() {
-    # Add a call to the loader in .bashrc
-    echo "# Custom aliases" >>.bashrc
-    echo "if [ -d ~/.bash_aliases_folder ]; then" >>.bashrc
-    echo "  . ~/.bash_aliases_folder/loader" >>.bashrc
-    echo "fi" >>.bashrc
-    echo "# END custom aliases" >>.bashrc
-
-    # using sudo from here in case we are in home ${userAdd} with pi
-    cd .bash_aliases_folder
-
-    # -O to force overwrite, but not for generated which could contain already extra customs -in case you re-run
-    sudo wget -O loader https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/loader && sudo chmod +x loader
-    sudo wget -O common https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/common && sudo chmod +x common
-    sudo wget -O nginx https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/nginx && sudo chmod +x nginx
-    sudo wget -O mysql https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/mysql && sudo chmod +x mysql
-
-    sudo wget https://raw.githubusercontent.com/GonzaloTorreras/raspberry-pi-setup/master/src/.bash_aliases_folder/generated && sudo chmod +x generated
-
-} # END downloadAliases
+}
 
 inMenu=1
 while [ $inMenu ]; do
@@ -363,7 +383,34 @@ while [ $inMenu ]; do
             opt5="x"
         fi
         ;;
-
+    6 | 06)
+        if [ $opt6 == "x" ]; then
+            opt6="-"
+        else
+            opt6="x"
+        fi
+        ;;
+    7 | 07)
+        if [ $opt7 == "x" ]; then
+            opt7="-"
+        else
+            opt7="x"
+        fi
+        ;;
+    8 | 08)
+        if [ $opt8 == "x" ]; then
+            opt8="-"
+        else
+            opt8="x"
+        fi
+        ;;
+    9 | 09)
+        if [ $opt9 == "x" ]; then
+            opt9="-"
+        else
+            opt9="x"
+        fi
+        ;;
     *) echo "only the numbered options are valid" ;;
     esac
 done
@@ -390,10 +437,11 @@ if [ "$opt4" == "x" ]; then
 fi
 
 if [ "$opt5" == "x" ]; then
-    customAliases
+    
     echo -e "\n"
 fi
 
+# Try to delete de pi user if confirmed
 if [ delPiUser ]; then
     echo -e "pi user, couldn't be deleted, probably because its running this same shell or a different process"
     echo -e "close any process including this sessions and login with your new user"

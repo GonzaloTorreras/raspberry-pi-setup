@@ -1,3 +1,6 @@
+#Test the nginx config
+alias nginx_test_config='sudo nginx -c /etc/nginx/nginx.conf -t'
+
 # Usage: nginx_add_site( domain.com.conf ) || nginx_add_site( domain.com )
 nginx_add_enable(){
     nginxFolderBase="/etc/nginx/"

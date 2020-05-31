@@ -1,5 +1,8 @@
 #delete last command from bash history:
 alias one_history="cat /dev/null > ~/.bash_history"
+
+#Reload all the alias
 alias reload_alias='source ~/.bashrc'
+
+#show ports in use
 alias ports='sudo netstat -tulpn'
-alias nginx_test_config='sudo nginx -c /etc/nginx/nginx.conf -t'
