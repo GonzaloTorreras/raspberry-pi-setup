@@ -15,6 +15,10 @@ opt2="x"
 opt3="x"
 opt4="x"
 opt5="x"
+opt6="x"
+opt7="x"
+opt8="x"
+opt9="x"
 
 #debug
 #set -x
@@ -120,25 +124,28 @@ addUser() {
         fi
 
         #add extra groups to fix stupid possible issues:
-            sudo usermod -G gpio ${userAdd}
-            sudo usermod -G video ${userAdd} #fix to be able to use vcgencmd measure_temp
-    fi
+        sudo usermod -G gpio ${userAdd}
+        sudo usermod -G video ${userAdd} #fix to be able to use vcgencmd measure_temp
+        
+        echo -e "\n"
+        read -p "Write your pass for $userAdd: " userPass
+        echo -e "${userAdd}:${userPass}" | sudo chpasswd
 
-    echo -e "\n"
-    read -p "Write your pass for ${userAdd}: " userPass
-    echo -e "${userAdd}:${userPass}" | sudo chpasswd
-
-    echo -e "\n"
-    read -n 1 -p "Add user to sudoers.d? (using sudo wont ask for passwd) [y/n]: " yn
-    if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
-        echo "${userAdd} ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/010_${userAdd}-nopasswd
+        echo -e "\n"
+        read -n 1 -p "Add user to sudoers.d? (using sudo wont ask for passwd) [y/n]: " yn
+        if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
+            echo "${userAdd} ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/010_${userAdd}-nopasswd
+        fi
+   
     fi
 
     echo -e "\n"
     read -n 1 -p "Do you want to install useful aliases? [y/n]: " yn
     if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
-        customAliases
+        sudo su ${userAdd} customAliases
     fi
+
+    
 
     echo -e "\n"
     read -n 1 -p "Lock the pi user [y/n]: " yn
@@ -437,7 +444,7 @@ if [ "$opt4" == "x" ]; then
 fi
 
 if [ "$opt5" == "x" ]; then
-    
+
     echo -e "\n"
 fi
 
