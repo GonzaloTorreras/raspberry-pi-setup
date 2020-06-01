@@ -10,6 +10,8 @@ Help() {
     echo "Docker & docker-composer and configure it"
 }
 
+version=0.9
+
 opt1="x"
 opt2="x"
 opt3="x"
@@ -28,7 +30,7 @@ mainMenu() {
     clear
 
     echo "#################################"
-    echo " pi auto installer:"
+    echo " pi auto installer v$version:"
     echo " 1.[$opt1] Run update & upgrade"
     echo " 2.[$opt2] User related (new user, useful aliases, delete pi...)"
     echo " 3.[$opt3] Install/Config UFW"
@@ -60,18 +62,26 @@ customAliases() {
         source ~/.bashrc
     fi
 
-    echo -e "\n"
-    read -n 1 -p "Add aliases to NEW user ${userAdd} [y/n]: " yn
-    echo -e "\n"
-    if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
-        if ! [ -d /home/${userAdd}/.bash_aliases_folder ]; then
-            sudo mkdir /home/${userAdd}/.bash_aliases_folder
-        fi
-        cd /home/${userAdd}/
-        downloadAliases
+    if [[ "$userAdd" != 0 ]]; then 
+        echo -e "\n"
+        read -n 1 -p "Add aliases to NEW user ${userAdd} [y/n]: " yn
+        echo -e "\n"
+        if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
+            if ! [ -d /home/${userAdd}/.bash_aliases_folder ]; then
+                sudo mkdir /home/${userAdd}/.bash_aliases_folder
+            fi
+            
+            currentDirectory = $PWD
+            
+            cd /home/${userAdd}/
+            downloadAliases
 
-        #fix permissions
-        sudo chown ${userAdd}:${userAdd} /home/${userAdd}/.bash_aliases_folder/
+            #fix permissions
+            sudo chown ${userAdd}:${userAdd} /home/${userAdd}/.bash_aliases_folder/
+            
+            #go back to original directory
+            cd $PWD
+        fi
     fi
 
 } # END customAliases
@@ -248,7 +258,7 @@ installDocker() {
     if ! [ -x "$(command -v docker)" ]; then
         curl -sSL https://get.docker.com | sh
     else
-        echo "Docker already exists!"
+        echo "Docker already installed, skipping to config!"
     fi
 
     echo -e "\n"
@@ -261,7 +271,7 @@ installDocker() {
             sudo usermod -aG docker $USER
         fi
 
-        if [ "$opt2" == "x" ]; then
+        if [[ "$userAdd" != 0 ]; then
             echo -e "\n"
             read -n 1 -p "Add NEW user ${userAdd} to docker group? [y/n]: " yn
             if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
@@ -325,7 +335,19 @@ downloadDockerImage() {
         if ! [[ "$yn" == "y" || "$yn" == "Y" ]]; then
             echo -e "\n"
             read -p "/full/path/for/docker/containers ? : " cdTo
-            cd cdTo
+            
+            if ! [ -d cdTo ]; then
+                echo -e "\n"
+                read -p "The directory doesn't exists!, do you want to create: \n $cdTo" yn
+                if ! [[ "$yn" == "y" || "$yn" == "Y" ]]; then
+                    mkdir cdTo && cd cdTo
+                else
+#############################################
+                    #improve to add the positiblity to write a different one and double check again
+                    exit 1
+                fi
+            fi
+            
         fi
 
         mkdir ${dockerImage} && cd ${dockerImage}
@@ -340,7 +362,7 @@ downloadDockerImage() {
 
 }
 
-installNodered() { #legacy
+fanController() { 
     echo -e "\n"
 
 }
@@ -444,7 +466,7 @@ if [ "$opt4" == "x" ]; then
 fi
 
 if [ "$opt5" == "x" ]; then
-
+    fanController
     echo -e "\n"
 fi
 
