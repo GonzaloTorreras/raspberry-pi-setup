@@ -142,7 +142,7 @@ addUser() {
     echo -e "\n"
     read -n 1 -p "Do you want to install useful aliases? [y/n]: " yn
     if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
-        sudo su ${userAdd} customAliases
+        customAliases
     fi
 
     
