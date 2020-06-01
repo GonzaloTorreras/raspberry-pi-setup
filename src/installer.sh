@@ -338,7 +338,7 @@ downloadDockerImage() {
             
             if ! [ -d cdTo ]; then
                 echo -e "\n"
-                read -p "The directory doesn't exists!, do you want to create: \n $cdTo" yn
+                read -n 1 -p "The directory doesn't exists!, do you want to create: $cdTo" yn
                 if ! [[ "$yn" == "y" || "$yn" == "Y" ]]; then
                     mkdir cdTo && cd cdTo
                 else
