@@ -271,7 +271,7 @@ installDocker() {
             sudo usermod -aG docker $USER
         fi
 
-        if [[ "$userAdd" != 0 ]; then
+        if [[ "$userAdd" != 0 ]]; then
             echo -e "\n"
             read -n 1 -p "Add NEW user ${userAdd} to docker group? [y/n]: " yn
             if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
