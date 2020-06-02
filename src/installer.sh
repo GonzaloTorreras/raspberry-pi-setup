@@ -10,7 +10,7 @@ Help() {
     echo "Docker & docker-composer and configure it"
 }
 
-version=0.9
+version=0.9.1
 
 opt1="x"
 opt2="x"
@@ -340,7 +340,7 @@ downloadDockerImage() {
                 echo -e "\n"
                 read -n 1 -p "The directory doesn't exists!, do you want to create: $cdTo" yn
                 if ! [[ "$yn" == "y" || "$yn" == "Y" ]]; then
-                    mkdir cdTo && cd cdTo
+                    mkdir -p cdTo && cd cdTo
                 else
 #############################################
                     #improve to add the positiblity to write a different one and double check again
