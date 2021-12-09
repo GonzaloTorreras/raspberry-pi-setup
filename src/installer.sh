@@ -297,7 +297,7 @@ installDocker() {
     if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
 
         #must match folder names in the repo inside docker/
-        customContainers[0]="ngixn"
+        customContainers[0]="nginx"
         customContainers[1]="nodered"
 
         for dockerImage in "${customContainers[@]}"; do
